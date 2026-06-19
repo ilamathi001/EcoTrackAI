@@ -1,0 +1,64 @@
+<div class="container">
+
+  <div class="header">
+    <h1>🌱 EcoTrackAI</h1>
+    <p>AI-Powered Carbon Footprint Awareness Platform</p>
+  </div>
+
+  <div class="form-card">
+
+    <label>User Name</label>
+    <input
+      type="text"
+      [(ngModel)]="formData.userName"
+      placeholder="Enter your name">
+
+    <label>Electricity Units</label>
+    <input
+      type="number"
+      [(ngModel)]="formData.electricityUnits"
+      placeholder="Enter electricity units">
+
+    <label>Vehicle Type</label>
+    <select [(ngModel)]="formData.vehicleType">
+      <option value="CAR">Car</option>
+      <option value="BUS">Bus</option>
+    </select>
+
+    <label>Food Preference</label>
+    <select [(ngModel)]="formData.foodType">
+      <option value="NONVEG">Non Veg</option>
+      <option value="VEG">Veg</option>
+    </select>
+
+    <button (click)="calculate()">
+      Calculate Carbon Footprint
+    </button>
+
+  </div>
+
+  <div class="result-card">
+
+    <h2>📊 Sustainability Report</h2>
+
+    <div class="score-box">
+      <h3>Carbon Score</h3>
+      <h1>{{ carbonScore }}</h1>
+    </div>
+
+    <div class="emission-box">
+      <h3>Carbon Emission</h3>
+      <h1>{{ carbonEmission }}</h1>
+    </div>
+
+  </div>
+
+  <div class="recommendation-card" *ngIf="recommendation">
+
+    <h2>🤖 AI Recommendation</h2>
+
+    <pre>{{ recommendation }}</pre>
+
+  </div>
+
+</div>
