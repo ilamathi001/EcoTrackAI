@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {
+Component,
+OnInit,
+ChangeDetectorRef
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { ActivityService } from '../../services/activity';
 
 @Component({
@@ -29,26 +35,33 @@ errorMessage = '';
 
 history: any[] = [];
 
-constructor(private service: ActivityService) {}
+constructor(
+private service: ActivityService,
+private cdr: ChangeDetectorRef
+) {}
 
 ngOnInit(): void {
 this.loadHistory();
 }
 
 loadHistory(): void {
+
+
 this.service.getHistory()
-.subscribe({
-next: (data: any) => {
-this.history = data;
-},
-error: (err) => {
-console.error('History Error:', err);
-}
-});
+  .subscribe({
+    next: (data: any) => {
+      this.history = data;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('History Error:', err);
+    }
+  });
+
+
 }
 
 calculate(): void {
-
 
 this.errorMessage = '';
 this.recommendation = '';
@@ -67,12 +80,17 @@ this.service.saveActivity(this.formData)
 
       console.log('Activity Response:', result);
 
-      this.carbonScore = result.carbonScore;
-      this.carbonEmission = result.carbonEmission;
+      this.carbonScore =
+        Number(result.carbonScore) || 0;
+
+      this.carbonEmission =
+        Number(result.carbonEmission) || 0;
+
+      this.isLoading = false;
 
       this.loadHistory();
 
-      this.isLoading = false;
+      this.cdr.detectChanges();
 
       this.service.getRecommendation(this.formData)
         .subscribe({
@@ -82,7 +100,9 @@ this.service.saveActivity(this.formData)
             console.log('AI Response:', aiResult);
 
             this.recommendation =
-              aiResult.recommendation;
+              aiResult.recommendation || '';
+
+            this.cdr.detectChanges();
           },
 
           error: (err) => {
@@ -91,6 +111,8 @@ this.service.saveActivity(this.formData)
 
             this.recommendation =
               'AI recommendation is currently unavailable.';
+
+            this.cdr.detectChanges();
           }
 
         });
@@ -105,6 +127,8 @@ this.service.saveActivity(this.formData)
         'Unable to process request. Please try again.';
 
       this.isLoading = false;
+
+      this.cdr.detectChanges();
     }
 
   });
