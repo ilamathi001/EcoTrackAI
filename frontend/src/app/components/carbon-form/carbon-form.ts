@@ -1,17 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
 import { ActivityService } from '../../services/activity';
-
-interface ActivityResponse {
-carbonScore: number;
-carbonEmission: number;
-}
-
-interface RecommendationResponse {
-recommendation: string;
-}
 
 @Component({
 selector: 'app-carbon-form',
@@ -47,7 +37,7 @@ this.loadHistory();
 
 loadHistory(): void {
 
-
+```
 this.service.getHistory()
   .subscribe({
     next: (data: any) => {
@@ -57,13 +47,13 @@ this.service.getHistory()
       console.error(err);
     }
   });
-
+```
 
 }
 
 calculate(): void {
 
-
+```
 this.errorMessage = '';
 
 if (!this.formData.userName.trim()) {
@@ -83,35 +73,31 @@ if (this.formData.distanceTravelled < 0) {
 
 this.isLoading = true;
 
-forkJoin({
-  activity: this.service.saveActivity(this.formData),
-  recommendation: this.service.getRecommendation(this.formData)
-}).subscribe({
-  next: (result: {
-    activity: ActivityResponse;
-    recommendation: RecommendationResponse;
-  }) => {
+this.service.saveActivity(this.formData)
+  .subscribe({
 
-    this.carbonScore = result.activity.carbonScore;
-    this.carbonEmission = result.activity.carbonEmission;
-    this.recommendation =
-      result.recommendation.recommendation;
+    next: (result: any) => {
 
-    this.loadHistory();
-    this.isLoading = false;
-  },
+      this.carbonScore = result.carbonScore;
+      this.carbonEmission = result.carbonEmission;
 
-  error: (err) => {
+      this.loadHistory();
 
-    console.error(err);
+      this.isLoading = false;
+    },
 
-    this.errorMessage =
-      'Unable to process request. Please try again.';
+    error: (err) => {
 
-    this.isLoading = false;
-  }
-});
+      console.error(err);
 
+      this.errorMessage =
+        'Unable to process request. Please try again.';
+
+      this.isLoading = false;
+    }
+
+  });
+```
 
 }
 }
