@@ -46,7 +46,7 @@ Gemini AI
 
 ## Live Demo
 
-https://your-render-url.onrender.com
+https://ecotrackai-j8be.onrender.com
 
 ## GitHub Repository
 
