@@ -13,52 +13,52 @@ import com.ecotrack.service.GeminiService;
 @CrossOrigin(origins = "*")
 public class AiController {
 
+    @Autowired
+    private GeminiService geminiService;
 
-@Autowired
-private GeminiService geminiService;
+    @PostMapping("/recommend")
+    public Map<String, String> recommend(
+            @RequestBody Map<String, Object> request) {
 
-@PostMapping("/recommend")
-public Map<String, String> recommend(
-        @RequestBody Map<String, Object> request) {
+        String userName =
+                String.valueOf(
+                        request.getOrDefault(
+                                "userName",
+                                "User"));
 
-    String userName =
-            String.valueOf(request.getOrDefault("userName", "User"));
+        Integer electricityUnits =
+                Integer.parseInt(
+                        String.valueOf(
+                                request.getOrDefault(
+                                        "electricityUnits",
+                                        0)));
 
-    Integer electricityUnits =
-            Integer.parseInt(
-                    String.valueOf(
-                            request.getOrDefault(
-                                    "electricityUnits",
-                                    0)));
+        String vehicleType =
+                String.valueOf(
+                        request.getOrDefault(
+                                "vehicleType",
+                                "CAR"));
 
-    String vehicleType =
-            String.valueOf(
-                    request.getOrDefault(
-                            "vehicleType",
-                            "CAR"));
+        String foodType =
+                String.valueOf(
+                        request.getOrDefault(
+                                "foodType",
+                                "NONVEG"));
 
-    String foodType =
-            String.valueOf(
-                    request.getOrDefault(
-                            "foodType",
-                            "NONVEG"));
+        String recommendation =
+                geminiService.getRecommendation(
+                        userName,
+                        electricityUnits,
+                        vehicleType,
+                        foodType);
 
-    String recommendation =
-            geminiService.getRecommendation(
-                    userName,
-                    electricityUnits,
-                    vehicleType,
-                    foodType);
+        Map<String, String> response =
+                new HashMap<>();
 
-    Map<String, String> response =
-            new HashMap<>();
+        response.put(
+                "recommendation",
+                recommendation);
 
-    response.put(
-            "recommendation",
-            recommendation);
-
-    return response;
-}
-
-
+        return response;
+    }
 }
