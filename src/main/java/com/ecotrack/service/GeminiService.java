@@ -16,111 +16,137 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class GeminiService {
 
-    @Value("${gemini.api.key}")
-    private String apiKey;
 
-    private final RestTemplate restTemplate;
+@Value("${gemini.api.key}")
+private String apiKey;
 
-    public GeminiService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+private final RestTemplate restTemplate;
 
-    @SuppressWarnings("unchecked")
-    public String getRecommendation(String userName,
-                                    Integer electricityUnits,
-                                    String vehicleType,
-                                    String foodType) {
+public GeminiService(RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
+}
 
-        String prompt = """
-                You are an environmental sustainability expert.
+@SuppressWarnings("unchecked")
+public String getRecommendation(
+        String userName,
+        Integer electricityUnits,
+        String vehicleType,
+        String foodType) {
 
-                Analyze this user's carbon footprint.
+    String prompt = """
+            You are an environmental sustainability expert.
 
-                User Name: %s
-                Electricity Units: %d
-                Vehicle Type: %s
-                Food Type: %s
+            Analyze this user's carbon footprint.
 
-                Provide:
+            User Name: %s
+            Electricity Units: %d
+            Vehicle Type: %s
+            Food Type: %s
 
-                Carbon Footprint Summary
+            Provide:
 
-                Top Emission Sources
+            1. Carbon Footprint Summary
+            2. Top Emission Sources
+            3. Personalized Recommendations
+            4. Estimated Carbon Reduction
 
-                Personalized Recommendations
+            Keep response under 200 words.
+            """
+            .formatted(
+                    userName,
+                    electricityUnits,
+                    vehicleType,
+                    foodType);
 
-                Estimated Carbon Reduction
+    String url =
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="
+                    + apiKey;
 
-                Keep response under 200 words.
-                """
-                .formatted(
-                        userName,
-                        electricityUnits,
-                        vehicleType,
-                        foodType);
+    Map<String, Object> requestBody =
+            Map.of(
+                    "contents",
+                    List.of(
+                            Map.of(
+                                    "parts",
+                                    List.of(
+                                            Map.of(
+                                                    "text",
+                                                    prompt)))));
 
-        String url =
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="
-                        + apiKey;
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
 
-        Map<String, Object> requestBody =
-                Map.of(
-                        "contents",
-                        List.of(
-                                Map.of(
-                                        "parts",
-                                        List.of(
-                                                Map.of(
-                                                        "text",
-                                                        prompt)))));
+    HttpEntity<Map<String, Object>> entity =
+            new HttpEntity<>(requestBody, headers);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    try {
 
-        HttpEntity<Map<String, Object>> entity =
-                new HttpEntity<>(requestBody, headers);
+        ResponseEntity<Map<String, Object>> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.POST,
+                        entity,
+                        new ParameterizedTypeReference<Map<String, Object>>() {
+                        });
 
-        try {
+        Map<String, Object> body = response.getBody();
 
-            ResponseEntity<Map<String, Object>> response =
-                    restTemplate.exchange(
-                            url,
-                            HttpMethod.POST,
-                            entity,
-                            new ParameterizedTypeReference<Map<String, Object>>() {});
-
-            Map<String, Object> body = response.getBody();
-
-            if (body == null) {
-                return "No response received from Gemini.";
-            }
-
-            List<?> candidates =
-                    (List<?>) body.get("candidates");
-
-            if (candidates == null || candidates.isEmpty()) {
-                return "No recommendation generated.";
-            }
-
-            Map<String, Object> firstCandidate =
-                    (Map<String, Object>) candidates.get(0);
-
-            Map<String, Object> content =
-                    (Map<String, Object>) firstCandidate.get("content");
-
-            List<?> parts =
-                    (List<?>) content.get("parts");
-
-            Map<String, Object> firstPart =
-                    (Map<String, Object>) parts.get(0);
-
-            return firstPart.get("text").toString();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-            return "GEMINI ERROR : " + e.getMessage();
+        if (body == null) {
+            return getFallbackRecommendation();
         }
+
+        List<?> candidates =
+                (List<?>) body.get("candidates");
+
+        if (candidates == null || candidates.isEmpty()) {
+            return getFallbackRecommendation();
+        }
+
+        Map<String, Object> firstCandidate =
+                (Map<String, Object>) candidates.get(0);
+
+        Map<String, Object> content =
+                (Map<String, Object>) firstCandidate.get("content");
+
+        List<?> parts =
+                (List<?>) content.get("parts");
+
+        Map<String, Object> firstPart =
+                (Map<String, Object>) parts.get(0);
+
+        return firstPart.get("text").toString();
+
+    } catch (Exception e) {
+
+        System.out.println("Gemini Error: " + e.getMessage());
+
+        return getFallbackRecommendation();
     }
+}
+
+private String getFallbackRecommendation() {
+
+    return """
+            Carbon Footprint Summary
+
+            Your carbon footprint is moderate.
+
+            Top Emission Sources:
+            • Electricity consumption
+            • Transportation usage
+
+            Personalized Recommendations:
+            • Reduce unnecessary electricity usage.
+            • Use public transport or carpooling.
+            • Prefer energy-efficient appliances.
+            • Increase plant-based meals during the week.
+            • Track your monthly carbon footprint.
+
+            Estimated Carbon Reduction:
+            • 15% - 20% reduction possible.
+
+            (Generated using fallback sustainability guidance.)
+            """;
+}
+
 }
