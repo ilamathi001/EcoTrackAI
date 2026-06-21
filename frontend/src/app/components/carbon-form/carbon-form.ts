@@ -36,20 +36,23 @@ this.loadHistory();
 }
 
 loadHistory(): void {
+
+
 this.service.getHistory()
-.subscribe({
-next: (data: any) => {
-this.history = data;
-},
-error: (err) => {
-console.error('History Error:', err);
-}
-});
+  .subscribe({
+    next: (data: any) => {
+      this.history = data;
+    },
+    error: (err) => {
+      console.error('History Error:', err);
+    }
+  });
+
+
 }
 
 calculate(): void {
 
-alert('BUTTON CLICKED');
 
 this.errorMessage = '';
 
@@ -70,35 +73,45 @@ if (this.formData.distanceTravelled < 0) {
 
 this.isLoading = true;
 
-console.log('Sending Request:', this.formData);
-
 this.service.saveActivity(this.formData)
   .subscribe({
 
     next: (result: any) => {
 
-      console.log('FULL RESPONSE:', JSON.stringify(result));
-
-      alert(
-        'Score=' +
-        result.carbonScore +
-        ', Emission=' +
-        result.carbonEmission
-      );
-
       this.carbonScore = result.carbonScore;
       this.carbonEmission = result.carbonEmission;
 
-      this.loadHistory();
+      this.service.getRecommendation(this.formData)
+        .subscribe({
 
-      this.isLoading = false;
+          next: (aiResult: any) => {
+
+            this.recommendation =
+              aiResult.recommendation;
+
+            this.loadHistory();
+
+            this.isLoading = false;
+          },
+
+          error: (err) => {
+
+            console.error('AI Error:', err);
+
+            this.recommendation =
+              'AI recommendation is currently unavailable.';
+
+            this.loadHistory();
+
+            this.isLoading = false;
+          }
+
+        });
     },
 
     error: (err) => {
 
-      console.error('API ERROR:', err);
-
-      alert('API ERROR');
+      console.error('Activity Error:', err);
 
       this.errorMessage =
         'Unable to process request. Please try again.';
