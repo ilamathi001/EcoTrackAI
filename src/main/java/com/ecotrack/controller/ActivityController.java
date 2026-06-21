@@ -15,21 +15,31 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*")
 public class ActivityController {
 
+    @Autowired
+    private ActivityService service;
 
-@Autowired
-private ActivityService service;
+    @PostMapping
+    public Activity saveActivity(
+            @Valid @RequestBody Activity activity) {
 
-@PostMapping
-public Activity saveActivity(
-        @Valid @RequestBody Activity activity) {
+        System.out.println("========== API HIT ==========");
+        System.out.println("User Name : " + activity.getUserName());
+        System.out.println("Units : " + activity.getElectricityUnits());
+        System.out.println("Distance : " + activity.getDistanceTravelled());
+        System.out.println("Vehicle : " + activity.getVehicleType());
 
-    return service.saveActivity(activity);
-}
+        Activity saved = service.saveActivity(activity);
 
-@GetMapping("/history")
-public List<Activity> getHistory() {
-    return service.getHistory();
-}
+        System.out.println("Score : " + saved.getCarbonScore());
 
+        return saved;
+    }
 
+    @GetMapping("/history")
+    public List<Activity> getHistory() {
+
+        System.out.println("========== HISTORY HIT ==========");
+
+        return service.getHistory();
+    }
 }
