@@ -36,38 +36,25 @@ this.loadHistory();
 }
 
 loadHistory(): void {
-
-
 this.service.getHistory()
-  .subscribe({
-    next: (data: any) => {
-      this.history = data;
-    },
-    error: (err) => {
-      console.error('History Error:', err);
-    }
-  });
-
-
+.subscribe({
+next: (data: any) => {
+this.history = data;
+},
+error: (err) => {
+console.error('History Error:', err);
+}
+});
 }
 
 calculate(): void {
 
 
 this.errorMessage = '';
+this.recommendation = '';
 
 if (!this.formData.userName.trim()) {
   this.errorMessage = 'Please enter your name';
-  return;
-}
-
-if (this.formData.electricityUnits < 0) {
-  this.errorMessage = 'Electricity units cannot be negative';
-  return;
-}
-
-if (this.formData.distanceTravelled < 0) {
-  this.errorMessage = 'Distance travelled cannot be negative';
   return;
 }
 
@@ -78,20 +65,24 @@ this.service.saveActivity(this.formData)
 
     next: (result: any) => {
 
+      console.log('Activity Response:', result);
+
       this.carbonScore = result.carbonScore;
       this.carbonEmission = result.carbonEmission;
+
+      this.loadHistory();
+
+      this.isLoading = false;
 
       this.service.getRecommendation(this.formData)
         .subscribe({
 
           next: (aiResult: any) => {
 
+            console.log('AI Response:', aiResult);
+
             this.recommendation =
               aiResult.recommendation;
-
-            this.loadHistory();
-
-            this.isLoading = false;
           },
 
           error: (err) => {
@@ -100,13 +91,10 @@ this.service.saveActivity(this.formData)
 
             this.recommendation =
               'AI recommendation is currently unavailable.';
-
-            this.loadHistory();
-
-            this.isLoading = false;
           }
 
         });
+
     },
 
     error: (err) => {
