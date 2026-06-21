@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { CarbonForm } from './carbon-form';
 
 describe('CarbonForm', () => {
@@ -13,10 +12,28 @@ describe('CarbonForm', () => {
 
     fixture = TestBed.createComponent(CarbonForm);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should have formData object', () => {
+    expect(component.formData).toBeTruthy();
+  });
+
+  it('should have carbonScore property', () => {
+    expect(component.carbonScore).toBeDefined();
+  });
+
+  it('should render EcoTrackAI title', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('EcoTrackAI');
+  });
+
+  it('should render Calculate button', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Calculate Carbon Footprint');
   });
 });
