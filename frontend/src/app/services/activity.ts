@@ -6,8 +6,11 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ActivityService {
 
-  private activityUrl = 'http://localhost:8080/api/activity';
-  private aiUrl = 'http://localhost:8080/api/ai/recommend';
+  private activityUrl =
+    'https://ecotrackai-j8be.onrender.com/api/activity';
+
+  private aiUrl =
+    'https://ecotrackai-j8be.onrender.com/api/ai/recommend';
 
   constructor(private http: HttpClient) {}
 
