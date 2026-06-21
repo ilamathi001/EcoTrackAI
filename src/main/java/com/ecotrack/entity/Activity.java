@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "activity")
 public class Activity {
 
-
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
@@ -32,7 +31,11 @@ private Double distanceTravelled;
 private String foodType;
 
 private Double carbonEmission;
+
 private Integer carbonScore;
+
+public Activity() {
+}
 
 public Long getId() {
     return id;
@@ -97,6 +100,5 @@ public Integer getCarbonScore() {
 public void setCarbonScore(Integer carbonScore) {
     this.carbonScore = carbonScore;
 }
-
 
 }

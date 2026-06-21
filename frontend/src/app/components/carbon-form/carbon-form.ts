@@ -36,23 +36,18 @@ this.loadHistory();
 }
 
 loadHistory(): void {
-
-
 this.service.getHistory()
-  .subscribe({
-    next: (data: any) => {
-      this.history = data;
-    },
-    error: (err) => {
-      console.error('History Error:', err);
-    }
-  });
-
-
+.subscribe({
+next: (data: any) => {
+this.history = data;
+},
+error: (err) => {
+console.error('History Error:', err);
+}
+});
 }
 
 calculate(): void {
-
 
 alert('BUTTON CLICKED');
 
@@ -82,9 +77,14 @@ this.service.saveActivity(this.formData)
 
     next: (result: any) => {
 
-      alert('API SUCCESS');
+      console.log('FULL RESPONSE:', JSON.stringify(result));
 
-      console.log('Response:', result);
+      alert(
+        'Score=' +
+        result.carbonScore +
+        ', Emission=' +
+        result.carbonEmission
+      );
 
       this.carbonScore = result.carbonScore;
       this.carbonEmission = result.carbonEmission;
@@ -96,9 +96,9 @@ this.service.saveActivity(this.formData)
 
     error: (err) => {
 
-      alert('API ERROR');
+      console.error('API ERROR:', err);
 
-      console.error('API Error:', err);
+      alert('API ERROR');
 
       this.errorMessage =
         'Unable to process request. Please try again.';
