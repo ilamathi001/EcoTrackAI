@@ -10,34 +10,55 @@ import com.ecotrack.service.GeminiService;
 
 @RestController
 @RequestMapping("/api/ai")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class AiController {
 
-    @Autowired
-    private GeminiService geminiService;
 
-    @PostMapping("/recommend")
-    public Map<String, String> recommend(
-            @RequestBody Map<String, Object> request) {
+@Autowired
+private GeminiService geminiService;
 
-        String userName = (String) request.get("userName");
-        Integer electricityUnits =
-                Integer.parseInt(request.get("electricityUnits").toString());
-        String vehicleType =
-                request.get("vehicleType").toString();
-        String foodType =
-                request.get("foodType").toString();
+@PostMapping("/recommend")
+public Map<String, String> recommend(
+        @RequestBody Map<String, Object> request) {
 
-        String recommendation =
-                geminiService.getRecommendation(
-                        userName,
-                        electricityUnits,
-                        vehicleType,
-                        foodType);
+    String userName =
+            String.valueOf(request.getOrDefault("userName", "User"));
 
-        Map<String, String> response = new HashMap<>();
-        response.put("recommendation", recommendation);
+    Integer electricityUnits =
+            Integer.parseInt(
+                    String.valueOf(
+                            request.getOrDefault(
+                                    "electricityUnits",
+                                    0)));
 
-        return response;
-    }
+    String vehicleType =
+            String.valueOf(
+                    request.getOrDefault(
+                            "vehicleType",
+                            "CAR"));
+
+    String foodType =
+            String.valueOf(
+                    request.getOrDefault(
+                            "foodType",
+                            "NONVEG"));
+
+    String recommendation =
+            geminiService.getRecommendation(
+                    userName,
+                    electricityUnits,
+                    vehicleType,
+                    foodType);
+
+    Map<String, String> response =
+            new HashMap<>();
+
+    response.put(
+            "recommendation",
+            recommendation);
+
+    return response;
+}
+
+
 }

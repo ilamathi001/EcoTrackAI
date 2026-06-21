@@ -16,125 +16,138 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class GeminiService {
 
-    @Value("${gemini.api.key}")
-    private String apiKey;
 
-    private final RestTemplate restTemplate;
+@Value("${gemini.api.key}")
+private String apiKey;
 
-    public GeminiService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+private final RestTemplate restTemplate;
 
-    @SuppressWarnings("unchecked")
-    public String getRecommendation(String userName,
-                                    Integer electricityUnits,
-                                    String vehicleType,
-                                    String foodType) {
+public GeminiService(RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
+}
 
-        String prompt = """
-                You are a sustainability expert.
+@SuppressWarnings("unchecked")
+public String getRecommendation(String userName,
+                                Integer electricityUnits,
+                                String vehicleType,
+                                String foodType) {
 
-                Analyze the user's carbon footprint.
+    String prompt = """
+            You are an environmental sustainability expert.
 
-                User Name: %s
-                Electricity Units: %d
-                Vehicle Type: %s
-                Food Type: %s
+            Analyze this user's carbon footprint.
 
-                Provide:
-                1. Carbon footprint summary
-                2. Top emission source
-                3. Three personalized recommendations
-                4. Estimated reduction opportunities
+            User Name: %s
+            Electricity Units: %d
+            Vehicle Type: %s
+            Food Type: %s
 
-                Keep the response concise.
-                """
-                .formatted(
-                        userName,
-                        electricityUnits,
-                        vehicleType,
-                        foodType);
+            Provide output in this format:
 
-        String url =
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="
-                        + apiKey;
+            Carbon Footprint Summary:
+            - Brief assessment
 
-        Map<String, Object> requestBody =
-                Map.of(
-                        "contents",
-                        List.of(
-                                Map.of(
-                                        "parts",
-                                        List.of(
-                                                Map.of(
-                                                        "text",
-                                                        prompt)))));
+            Top Emission Sources:
+            - Source 1
+            - Source 2
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+            Personalized Recommendations:
+            - Recommendation 1
+            - Recommendation 2
+            - Recommendation 3
 
-        HttpEntity<Map<String, Object>> entity =
-                new HttpEntity<>(requestBody, headers);
+            Estimated Carbon Reduction:
+            - Percentage reduction possible
 
-        try {
+            Keep the response under 200 words.
+            """
+            .formatted(
+                    userName,
+                    electricityUnits,
+                    vehicleType,
+                    foodType);
 
-            ResponseEntity<Map<String, Object>> response =
-                    restTemplate.exchange(
-                            url,
-                            HttpMethod.POST,
-                            entity,
-                            new ParameterizedTypeReference<Map<String, Object>>() {});
+    String url =
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="
+                    + apiKey;
 
-            Map<String, Object> body = response.getBody();
+    Map<String, Object> requestBody =
+            Map.of(
+                    "contents",
+                    List.of(
+                            Map.of(
+                                    "parts",
+                                    List.of(
+                                            Map.of(
+                                                    "text",
+                                                    prompt)))));
 
-            if (body == null) {
-                return "No response received from Gemini.";
-            }
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
 
-            List<?> candidates =
-                    (List<?>) body.get("candidates");
+    HttpEntity<Map<String, Object>> entity =
+            new HttpEntity<>(requestBody, headers);
 
-            if (candidates == null || candidates.isEmpty()) {
-                return "No recommendation generated.";
-            }
+    try {
 
-            Map<String, Object> firstCandidate =
-                    (Map<String, Object>) candidates.get(0);
+        ResponseEntity<Map<String, Object>> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.POST,
+                        entity,
+                        new ParameterizedTypeReference<Map<String, Object>>() {});
 
-            Map<String, Object> content =
-                    (Map<String, Object>) firstCandidate.get("content");
+        Map<String, Object> body = response.getBody();
 
-            List<?> parts =
-                    (List<?>) content.get("parts");
-
-            Map<String, Object> firstPart =
-                    (Map<String, Object>) parts.get(0);
-
-            return firstPart.get("text").toString();
-
-        } catch (Exception e) {
-
-            return """
-                    Carbon Footprint Analysis
-
-                    Your carbon footprint is moderate to high.
-
-                    Top emission sources:
-                    • Electricity consumption
-                    • Transportation usage
-                    • Food habits
-
-                    Recommendations:
-                    1. Reduce electricity usage by 10%.
-                    2. Use public transport or carpooling.
-                    3. Increase plant-based meals.
-                    4. Monitor your monthly energy consumption.
-
-                    Estimated reduction opportunity:
-                    15% - 20% lower carbon emissions.
-
-                    (Fallback recommendation generated because Gemini quota is unavailable.)
-                    """;
+        if (body == null) {
+            return "No response received from Gemini.";
         }
+
+        List<?> candidates =
+                (List<?>) body.get("candidates");
+
+        if (candidates == null || candidates.isEmpty()) {
+            return "No recommendation generated.";
+        }
+
+        Map<String, Object> firstCandidate =
+                (Map<String, Object>) candidates.get(0);
+
+        Map<String, Object> content =
+                (Map<String, Object>) firstCandidate.get("content");
+
+        List<?> parts =
+                (List<?>) content.get("parts");
+
+        Map<String, Object> firstPart =
+                (Map<String, Object>) parts.get(0);
+
+        return firstPart.get("text").toString();
+
+    } catch (Exception e) {
+
+        return """
+                Carbon Footprint Analysis
+
+                Your carbon footprint is moderate to high.
+
+                Top emission sources:
+                • Electricity consumption
+                • Transportation usage
+                • Food habits
+
+                Recommendations:
+                1. Reduce electricity usage by 10%.
+                2. Use public transport or carpooling.
+                3. Increase plant-based meals.
+                4. Monitor your monthly energy consumption.
+
+                Estimated reduction opportunity:
+                15% - 20% lower carbon emissions.
+
+                (Fallback recommendation generated because Gemini quota is unavailable.)
+                """;
     }
+}
+
 }
