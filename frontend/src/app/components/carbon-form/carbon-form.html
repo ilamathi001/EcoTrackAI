@@ -8,10 +8,11 @@
       AI-Powered Carbon Footprint Awareness Platform
     </p>
 
-    <div style="display:flex;justify-content:center;gap:10px;">
+    <div class="header-buttons">
 
       <button
         type="button"
+        class="profile-btn"
         (click)="goToProfile()">
 
         👤 My Profile
@@ -20,6 +21,7 @@
 
       <button
         type="button"
+        class="logout-btn"
         (click)="logout()">
 
         🚪 Logout
@@ -37,7 +39,7 @@
     </h3>
 
     <label for="electricityUnits">
-      Electricity Units
+      ⚡ Electricity Units
     </label>
 
     <input
@@ -47,7 +49,7 @@
       placeholder="Enter electricity units">
 
     <label for="distanceTravelled">
-      Distance Travelled (KM)
+      🚗 Distance Travelled (KM)
     </label>
 
     <input
@@ -57,7 +59,7 @@
       placeholder="Enter distance travelled">
 
     <label for="vehicleType">
-      Vehicle Type
+      🚘 Vehicle Type
     </label>
 
     <select
@@ -72,20 +74,15 @@
     </select>
 
     <label for="foodType">
-      Food Preference
+      🍽 Food Preference
     </label>
 
     <select
       id="foodType"
       [(ngModel)]="formData.foodType">
 
-      <option value="NONVEG">
-        Non Veg
-      </option>
-
-      <option value="VEG">
-        Veg
-      </option>
+      <option value="NONVEG">Non Veg</option>
+      <option value="VEG">Veg</option>
 
     </select>
 
@@ -112,22 +109,38 @@
 
   </div>
 
+  <!-- Statistics -->
+
   <div
     *ngIf="history.length > 0"
-    class="result-card">
+    class="stats-container">
 
-    <h2>
-      📊 Statistics
-    </h2>
+    <div class="stat-card">
 
-    <div class="score-box">
-
-      <h3>
-        Total Activities
-      </h3>
+      <h3>📊 Activities</h3>
 
       <h1>
         {{ history.length }}
+      </h1>
+
+    </div>
+
+    <div class="stat-card">
+
+      <h3>🌱 Latest Score</h3>
+
+      <h1>
+        {{ carbonScore }}
+      </h1>
+
+    </div>
+
+    <div class="stat-card">
+
+      <h3>☁️ Latest Emission</h3>
+
+      <h1>
+        {{ carbonEmission }}
       </h1>
 
     </div>
@@ -138,9 +151,11 @@
     *ngIf="isLoading"
     class="loading-message">
 
-    Generating AI Sustainability Insights...
+    🤖 Generating AI Sustainability Insights...
 
   </div>
+
+  <!-- Sustainability Report -->
 
   <div class="result-card">
 
@@ -174,6 +189,8 @@
 
   </div>
 
+  <!-- AI Recommendation -->
+
   <div
     class="recommendation-card"
     *ngIf="recommendation">
@@ -186,41 +203,71 @@
 
   </div>
 
+  <!-- History -->
+
   <div
     class="history-card"
     *ngIf="history.length > 0">
 
     <h2>
-      📈 My Carbon Footprint History
+      📈 Carbon Footprint History
     </h2>
 
-    <table>
+    <div
+      *ngFor="let item of history"
+      class="activity-card">
 
-      <thead>
+      <div class="activity-header">
 
-        <tr>
+        <h3>
+          🌱 Eco Activity
+        </h3>
 
-          <th>User</th>
-          <th>Carbon Score</th>
-          <th>Carbon Emission</th>
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'excellent': item.carbonScore >= 90,
+            'good': item.carbonScore >= 75 && item.carbonScore < 90,
+            'warning': item.carbonScore < 75
+          }">
 
-        </tr>
+          {{
+            item.carbonScore >= 90
+            ? '🏆 Eco Champion'
+            : item.carbonScore >= 75
+            ? '🌿 Green User'
+            : '⚠ Improve'
+          }}
 
-      </thead>
+        </span>
 
-      <tbody>
+      </div>
 
-        <tr *ngFor="let item of history">
+      <div class="activity-details">
 
-          <td>{{ item.userName }}</td>
-          <td>{{ item.carbonScore }}</td>
-          <td>{{ item.carbonEmission }}</td>
+        <div class="detail-box">
 
-        </tr>
+          <p>Carbon Score</p>
 
-      </tbody>
+          <h3>
+            {{ item.carbonScore }}
+          </h3>
 
-    </table>
+        </div>
+
+        <div class="detail-box">
+
+          <p>Carbon Emission</p>
+
+          <h3>
+            {{ item.carbonEmission }} kg CO₂
+          </h3>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 

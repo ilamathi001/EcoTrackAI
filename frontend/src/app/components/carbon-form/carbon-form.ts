@@ -1,7 +1,7 @@
 import {
-Component,
-OnInit,
-ChangeDetectorRef
+  Component,
+  OnInit,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -10,170 +10,183 @@ import { FormsModule } from '@angular/forms';
 import { ActivityService } from '../../services/activity';
 
 @Component({
-selector: 'app-carbon-form',
-standalone: true,
-imports: [FormsModule, CommonModule],
-templateUrl: './carbon-form.html',
-styleUrls: ['./carbon-form.css']
+  selector: 'app-carbon-form',
+  standalone: true,
+  imports: [
+    FormsModule,
+    CommonModule
+  ],
+  templateUrl: './carbon-form.html',
+  styleUrls: ['./carbon-form.css']
 })
 export class CarbonForm implements OnInit {
 
-formData = {
-userName: '',
-electricityUnits: 0,
-vehicleType: 'CAR',
-distanceTravelled: 100,
-foodType: 'NONVEG'
-};
+  formData = {
+    userName: '',
+    electricityUnits: 0,
+    vehicleType: 'CAR',
+    distanceTravelled: 100,
+    foodType: 'NONVEG'
+  };
 
-carbonScore = 0;
-carbonEmission = 0;
-recommendation = '';
+  carbonScore = 0;
+  carbonEmission = 0;
+  recommendation = '';
 
-isLoading = false;
-errorMessage = '';
+  isLoading = false;
+  errorMessage = '';
 
-history: any[] = [];
+  history: any[] = [];
 
-constructor(
-private service: ActivityService,
-private cdr: ChangeDetectorRef
-) {}
+  constructor(
+    private service: ActivityService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-ngOnInit(): void {
+  ngOnInit(): void {
 
-const user =
-localStorage.getItem('user');
+    const user =
+      localStorage.getItem('user');
 
-if (!user) {
+    if (!user) {
 
-window.location.href =
-'/login';
+      window.location.href =
+        '/login';
 
-return;
-}
+      return;
+    }
 
-const userName =
-localStorage.getItem('userName');
+    const userName =
+      localStorage.getItem('userName');
 
-if (userName) {
+    if (userName) {
 
-this.formData.userName =
-userName;
+      this.formData.userName =
+        userName;
 
-this.loadHistory();
-}
-}
+      this.loadHistory();
+    }
+  }
 
-loadHistory(): void {
+  loadHistory(): void {
 
-if (!this.formData.userName) {
-return;
-}
+    if (!this.formData.userName) {
+      return;
+    }
 
-this.service
-.getHistory(this.formData.userName)
-.subscribe({
+    this.service
+      .getHistory(this.formData.userName)
+      .subscribe({
 
-next: (data: any) => {
+        next: (data: any) => {
 
-this.history = data;
+          this.history = data || [];
 
-this.cdr.detectChanges();
-},
+          this.cdr.detectChanges();
+        },
 
-error: (err) => {
+        error: (err) => {
 
-console.error(
-'History Error:',
-err
-);
-}
-});
-}
+          console.error(
+            'History Error:',
+            err
+          );
+        }
+      });
+  }
 
-calculate(): void {
+  calculate(): void {
 
-this.errorMessage = '';
-this.recommendation = '';
+    this.errorMessage = '';
+    this.recommendation = '';
 
-if (!this.formData.userName.trim()) {
+    if (!this.formData.userName.trim()) {
 
-this.errorMessage =
-'Please enter your name';
+      this.errorMessage =
+        'Please enter your name';
 
-return;
-}
+      return;
+    }
 
-this.isLoading = true;
+    this.isLoading = true;
 
-this.service.saveActivity(
-this.formData
-)
-.subscribe({
+    this.service
+      .saveActivity(this.formData)
+      .subscribe({
 
-next: (result: any) => {
+        next: (result: any) => {
 
-this.carbonScore =
-Number(result.carbonScore) || 0;
+          this.carbonScore =
+            Number(result?.carbonScore) || 0;
 
-this.carbonEmission =
-Number(result.carbonEmission) || 0;
+          this.carbonEmission =
+            Number(result?.carbonEmission) || 0;
 
-this.isLoading = false;
+          this.loadHistory();
 
-this.loadHistory();
+          this.service
+            .getRecommendation(this.formData)
+            .subscribe({
 
-this.cdr.detectChanges();
+              next: (aiResult: any) => {
 
-this.service
-.getRecommendation(
-this.formData
-)
-.subscribe({
+                this.recommendation =
+                  aiResult?.recommendation ||
+                  'No recommendation available';
 
-next: (aiResult: any) => {
+                this.isLoading = false;
 
-this.recommendation =
-aiResult.recommendation || '';
+                this.cdr.detectChanges();
+              },
 
-this.cdr.detectChanges();
-},
+              error: () => {
 
-error: () => {
+                this.recommendation =
+                  'AI recommendation is currently unavailable.';
 
-this.recommendation =
-'AI recommendation is currently unavailable.';
+                this.isLoading = false;
 
-this.cdr.detectChanges();
-}
-});
-},
+                this.cdr.detectChanges();
+              }
+            });
+        },
 
-error: () => {
+        error: () => {
 
-this.errorMessage =
-'Unable to process request. Please try again.';
+          this.errorMessage =
+            'Unable to process request. Please try again.';
 
-this.isLoading = false;
+          this.isLoading = false;
 
-this.cdr.detectChanges();
-}
-});
-}
+          this.cdr.detectChanges();
+        }
+      });
+  }
 
-goToProfile(): void {
+  goToProfile(): void {
 
-window.location.href =
-'/profile';
-}
+    window.location.href =
+      '/profile';
+  }
 
-logout(): void {
+  logout(): void {
 
-localStorage.clear();
+    localStorage.clear();
 
-window.location.href =
-'/login';
-}
+    window.location.href =
+      '/login';
+  }
 
+  getBadge(score: number): string {
+
+    if (score >= 90) {
+      return 'Eco Champion';
+    }
+
+    if (score >= 75) {
+      return 'Green User';
+    }
+
+    return 'Needs Improvement';
+  }
 }
