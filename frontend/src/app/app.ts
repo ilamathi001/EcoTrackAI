@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { CarbonForm } from './components/carbon-form/carbon-form';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [CarbonForm],
-  templateUrl: './app.html'
+selector: 'app-root',
+standalone: true,
+imports: [RouterOutlet],
+templateUrl: './app.html'
 })
 export class App {
 }

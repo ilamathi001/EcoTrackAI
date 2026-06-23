@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">EcoTrackAI</string>
+    <string name="title_activity_main">EcoTrackAI</string>
+    <string name="package_name">com.ecotrack.ai</string>
+    <string name="custom_url_scheme">com.ecotrack.ai</string>
+</resources>

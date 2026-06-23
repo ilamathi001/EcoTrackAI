@@ -35,11 +35,14 @@ public class ActivityController {
         return saved;
     }
 
-    @GetMapping("/history")
-    public List<Activity> getHistory() {
+    @GetMapping("/history/{userName}")
+    public List<Activity> getHistory(
+            @PathVariable String userName) {
 
-        System.out.println("========== HISTORY HIT ==========");
+        System.out.println(
+                "History Request For : "
+                        + userName);
 
-        return service.getHistory();
+        return service.getHistory(userName);
     }
 }

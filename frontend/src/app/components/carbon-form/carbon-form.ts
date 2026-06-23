@@ -41,24 +41,55 @@ private cdr: ChangeDetectorRef
 ) {}
 
 ngOnInit(): void {
+
+const user =
+localStorage.getItem('user');
+
+if (!user) {
+
+window.location.href =
+'/login';
+
+return;
+}
+
+const userName =
+localStorage.getItem('userName');
+
+if (userName) {
+
+this.formData.userName =
+userName;
+
 this.loadHistory();
+}
 }
 
 loadHistory(): void {
 
+if (!this.formData.userName) {
+return;
+}
 
-this.service.getHistory()
-  .subscribe({
-    next: (data: any) => {
-      this.history = data;
-      this.cdr.detectChanges();
-    },
-    error: (err) => {
-      console.error('History Error:', err);
-    }
-  });
+this.service
+.getHistory(this.formData.userName)
+.subscribe({
 
+next: (data: any) => {
 
+this.history = data;
+
+this.cdr.detectChanges();
+},
+
+error: (err) => {
+
+console.error(
+'History Error:',
+err
+);
+}
+});
 }
 
 calculate(): void {
@@ -67,72 +98,82 @@ this.errorMessage = '';
 this.recommendation = '';
 
 if (!this.formData.userName.trim()) {
-  this.errorMessage = 'Please enter your name';
-  return;
+
+this.errorMessage =
+'Please enter your name';
+
+return;
 }
 
 this.isLoading = true;
 
-this.service.saveActivity(this.formData)
-  .subscribe({
+this.service.saveActivity(
+this.formData
+)
+.subscribe({
 
-    next: (result: any) => {
+next: (result: any) => {
 
-      console.log('Activity Response:', result);
+this.carbonScore =
+Number(result.carbonScore) || 0;
 
-      this.carbonScore =
-        Number(result.carbonScore) || 0;
+this.carbonEmission =
+Number(result.carbonEmission) || 0;
 
-      this.carbonEmission =
-        Number(result.carbonEmission) || 0;
+this.isLoading = false;
 
-      this.isLoading = false;
+this.loadHistory();
 
-      this.loadHistory();
+this.cdr.detectChanges();
 
-      this.cdr.detectChanges();
+this.service
+.getRecommendation(
+this.formData
+)
+.subscribe({
 
-      this.service.getRecommendation(this.formData)
-        .subscribe({
+next: (aiResult: any) => {
 
-          next: (aiResult: any) => {
+this.recommendation =
+aiResult.recommendation || '';
 
-            console.log('AI Response:', aiResult);
+this.cdr.detectChanges();
+},
 
-            this.recommendation =
-              aiResult.recommendation || '';
+error: () => {
 
-            this.cdr.detectChanges();
-          },
+this.recommendation =
+'AI recommendation is currently unavailable.';
 
-          error: (err) => {
-
-            console.error('AI Error:', err);
-
-            this.recommendation =
-              'AI recommendation is currently unavailable.';
-
-            this.cdr.detectChanges();
-          }
-
-        });
-
-    },
-
-    error: (err) => {
-
-      console.error('Activity Error:', err);
-
-      this.errorMessage =
-        'Unable to process request. Please try again.';
-
-      this.isLoading = false;
-
-      this.cdr.detectChanges();
-    }
-
-  });
-
-
+this.cdr.detectChanges();
 }
+});
+},
+
+error: () => {
+
+this.errorMessage =
+'Unable to process request. Please try again.';
+
+this.isLoading = false;
+
+this.cdr.detectChanges();
+}
+});
+}
+
+goToProfile(): void {
+
+window.location.href =
+'/profile';
+}
+
+logout(): void {
+
+localStorage.clear();
+
+window.location.href =
+'/login';
+}
+
 }

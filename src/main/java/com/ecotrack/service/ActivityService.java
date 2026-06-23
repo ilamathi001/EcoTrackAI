@@ -92,9 +92,10 @@ public Activity saveActivity(Activity activity) {
     }
 }
 
-public List<Activity> getHistory() {
-    return repository.findAll();
-}
+public List<Activity> getHistory(
+        String userName) {
 
+    return repository.findByUserName(userName);
+}
 
 }

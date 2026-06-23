@@ -1,0 +1,46 @@
+<div
+  style="
+  max-width:700px;
+  margin:40px auto;
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+
+  <h1
+    style="
+    text-align:center;
+    color:#2e7d32;">
+
+    👤 My Profile
+
+  </h1>
+
+  <hr>
+
+  <h3>Name</h3>
+  <p>{{ user.name }}</p>
+
+  <h3>Email</h3>
+  <p>{{ user.email }}</p>
+
+  <h3>Mobile Number</h3>
+  <p>{{ user.mobileNumber }}</p>
+
+  <br>
+
+  <button
+    (click)="goToDashboard()">
+
+    Dashboard
+
+  </button>
+
+  <button
+    (click)="logout()">
+
+    Logout
+
+  </button>
+
+</div>

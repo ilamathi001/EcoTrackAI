@@ -1,104 +1,176 @@
 <div class="container">
 
   <div class="header">
+
     <h1>🌱 EcoTrackAI</h1>
-    <p>AI-Powered Carbon Footprint Awareness Platform</p>
+
+    <p>
+      AI-Powered Carbon Footprint Awareness Platform
+    </p>
+
+    <div style="display:flex;justify-content:center;gap:10px;">
+
+      <button
+        type="button"
+        (click)="goToProfile()">
+
+        👤 My Profile
+
+      </button>
+
+      <button
+        type="button"
+        (click)="logout()">
+
+        🚪 Logout
+
+      </button>
+
+    </div>
+
   </div>
 
   <div class="form-card">
 
+    <h3>
+      Welcome, {{ formData.userName }}
+    </h3>
 
-<label for="userName">User Name</label>
-<input
-  id="userName"
-  type="text"
-  [(ngModel)]="formData.userName"
-  placeholder="Enter your name"
-  aria-label="User Name">
+    <label for="electricityUnits">
+      Electricity Units
+    </label>
 
-<label for="electricityUnits">Electricity Units</label>
-<input
-  id="electricityUnits"
-  type="number"
-  [(ngModel)]="formData.electricityUnits"
-  placeholder="Enter electricity units"
-  aria-label="Electricity Units">
+    <input
+      id="electricityUnits"
+      type="number"
+      [(ngModel)]="formData.electricityUnits"
+      placeholder="Enter electricity units">
 
-<label for="distanceTravelled">
-  Distance Travelled (KM)
-</label>
+    <label for="distanceTravelled">
+      Distance Travelled (KM)
+    </label>
 
-<input
-  id="distanceTravelled"
-  type="number"
-  [(ngModel)]="formData.distanceTravelled"
-  placeholder="Enter distance travelled"
-  aria-label="Distance Travelled">
+    <input
+      id="distanceTravelled"
+      type="number"
+      [(ngModel)]="formData.distanceTravelled"
+      placeholder="Enter distance travelled">
 
-<label for="vehicleType">Vehicle Type</label>
+    <label for="vehicleType">
+      Vehicle Type
+    </label>
 
-<select
-  id="vehicleType"
-  [(ngModel)]="formData.vehicleType"
-  aria-label="Vehicle Type">
+    <select
+      id="vehicleType"
+      [(ngModel)]="formData.vehicleType">
 
-  <option value="CAR">Car</option>
-  <option value="BUS">Bus</option>
-  <option value="BIKE">Bike</option>
-  <option value="TRAIN">Train</option>
+      <option value="CAR">Car</option>
+      <option value="BUS">Bus</option>
+      <option value="BIKE">Bike</option>
+      <option value="TRAIN">Train</option>
 
-</select>
+    </select>
 
-<label for="foodType">Food Preference</label>
+    <label for="foodType">
+      Food Preference
+    </label>
 
-<select
-  id="foodType"
-  [(ngModel)]="formData.foodType"
-  aria-label="Food Preference">
+    <select
+      id="foodType"
+      [(ngModel)]="formData.foodType">
 
-  <option value="NONVEG">Non Veg</option>
-  <option value="VEG">Veg</option>
+      <option value="NONVEG">
+        Non Veg
+      </option>
 
-</select>
+      <option value="VEG">
+        Veg
+      </option>
 
-<div *ngIf="errorMessage" class="error-message">
-  {{ errorMessage }}
-</div>
+    </select>
 
-<button
-  type="button"
-  [disabled]="isLoading"
-  (click)="calculate()"
-  aria-label="Calculate Carbon Footprint">
+    <div
+      *ngIf="errorMessage"
+      class="error-message">
 
-  {{ isLoading
-      ? 'Processing...'
-      : 'Calculate Carbon Footprint' }}
+      {{ errorMessage }}
 
-</button>
+    </div>
 
+    <button
+      type="button"
+      [disabled]="isLoading"
+      (click)="calculate()">
+
+      {{
+        isLoading
+        ? 'Processing...'
+        : 'Calculate Carbon Footprint'
+      }}
+
+    </button>
 
   </div>
 
-  <div *ngIf="isLoading" class="loading-message">
+  <div
+    *ngIf="history.length > 0"
+    class="result-card">
+
+    <h2>
+      📊 Statistics
+    </h2>
+
+    <div class="score-box">
+
+      <h3>
+        Total Activities
+      </h3>
+
+      <h1>
+        {{ history.length }}
+      </h1>
+
+    </div>
+
+  </div>
+
+  <div
+    *ngIf="isLoading"
+    class="loading-message">
+
     Generating AI Sustainability Insights...
+
   </div>
 
   <div class="result-card">
 
+    <h2>
+      📊 Sustainability Report
+    </h2>
 
-<h2>📊 Sustainability Report</h2>
+    <div class="score-box">
 
-<div class="score-box">
-  <h3>Carbon Score</h3>
-  <h1>{{ carbonScore }}</h1>
-</div>
+      <h3>
+        Carbon Score
+      </h3>
 
-<div class="emission-box">
-  <h3>Carbon Emission (kg CO₂)</h3>
-  <h1>{{ carbonEmission }}</h1>
-</div>
+      <h1>
+        {{ carbonScore }}
+      </h1>
 
+    </div>
+
+    <div class="emission-box">
+
+      <h3>
+        Carbon Emission (kg CO₂)
+      </h3>
+
+      <h1>
+        {{ carbonEmission }}
+      </h1>
+
+    </div>
 
   </div>
 
@@ -106,11 +178,11 @@
     class="recommendation-card"
     *ngIf="recommendation">
 
+    <h2>
+      🤖 AI Recommendation
+    </h2>
 
-<h2>🤖 AI Recommendation</h2>
-
-<pre>{{ recommendation }}</pre>
-
+    <pre>{{ recommendation }}</pre>
 
   </div>
 
@@ -118,32 +190,37 @@
     class="history-card"
     *ngIf="history.length > 0">
 
+    <h2>
+      📈 My Carbon Footprint History
+    </h2>
 
-<h2>📈 Carbon Footprint History</h2>
+    <table>
 
-<table>
+      <thead>
 
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Carbon Score</th>
-      <th>Carbon Emission</th>
-    </tr>
-  </thead>
+        <tr>
 
-  <tbody>
-    <tr *ngFor="let item of history">
+          <th>User</th>
+          <th>Carbon Score</th>
+          <th>Carbon Emission</th>
 
-      <td>{{ item.userName }}</td>
+        </tr>
 
-      <td>{{ item.carbonScore }}</td>
+      </thead>
 
-      <td>{{ item.carbonEmission }}</td>
+      <tbody>
 
-    </tr>
-  </tbody>
+        <tr *ngFor="let item of history">
 
-</table>
+          <td>{{ item.userName }}</td>
+          <td>{{ item.carbonScore }}</td>
+          <td>{{ item.carbonEmission }}</td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
 
   </div>
 
