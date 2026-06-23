@@ -1,19 +1,47 @@
-<div style="display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f5f5;">
+<div
+  style="
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  background:#f5f5f5;">
 
-  <div style="width:400px;background:white;padding:30px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+  <div
+    style="
+    width:420px;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 2px 15px rgba(0,0,0,0.1);">
 
-    <h1 style="text-align:center;color:#2e7d32;">
+    <h1
+      style="
+      text-align:center;
+      color:#2e7d32;
+      margin-bottom:10px;">
+
       🌱 EcoTrackAI
+
     </h1>
 
-    <h2 style="text-align:center;">
-      Login
-    </h2>
+    <p
+      style="
+      text-align:center;
+      color:gray;
+      margin-bottom:25px;">
+
+      Login to continue
+
+    </p>
 
     <input
       [(ngModel)]="loginId"
       placeholder="Email or Mobile Number"
-      style="width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;">
+      style="
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:8px;">
 
     <br><br>
 
@@ -21,13 +49,25 @@
       [(ngModel)]="password"
       type="password"
       placeholder="Password"
-      style="width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;">
+      style="
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:8px;">
 
     <br><br>
 
     <button
       (click)="login()"
-      style="width:100%;padding:12px;background:#2e7d32;color:white;border:none;border-radius:8px;cursor:pointer;">
+      style="
+      width:100%;
+      padding:12px;
+      background:#2e7d32;
+      color:white;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:16px;">
 
       Login
 
@@ -37,18 +77,36 @@
 
     <div style="text-align:right;">
 
-      <a href="#">
+      <a
+        href="/forgot-password"
+        style="
+        text-decoration:none;
+        color:#1976d2;">
+
         Forgot Password?
+
       </a>
 
     </div>
 
     <br>
 
-    <div style="text-align:center;">
+    <div
+      style="
+      text-align:center;
+      color:#666;">
 
-      <a href="/register">
-        New User? Register Here
+      Don't have an account?
+
+      <a
+        href="/register"
+        style="
+        color:#2e7d32;
+        text-decoration:none;
+        font-weight:bold;">
+
+        Register Here
+
       </a>
 
     </div>

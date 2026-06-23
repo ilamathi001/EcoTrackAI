@@ -12,4 +12,6 @@ public interface UserRepository
     Optional<User> findByEmail(String email);
 
     Optional<User> findByMobileNumber(String mobileNumber);
+
+    Optional<User> findByResetToken(String resetToken);
 }

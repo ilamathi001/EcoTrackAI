@@ -15,68 +15,104 @@ import com.ecotrack.repository.UserRepository;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
+    @Autowired
+    private UserRepository userRepository;
 
-@Autowired
-private UserRepository userRepository;
+    @PostMapping("/register")
+    public User register(
+            @RequestBody User user) {
 
-@PostMapping("/register")
-public User register(
-        @RequestBody User user) {
-
-    return userRepository.save(user);
-}
-
-@PostMapping("/login")
-public Map<String, Object> login(
-        @RequestBody Map<String, String> request) {
-
-    String loginId =
-            request.get("loginId");
-
-    String password =
-            request.get("password");
-
-    Optional<User> user =
-            userRepository.findByEmail(
-                    loginId);
-
-    if (user.isEmpty()) {
-
-        user =
-                userRepository
-                        .findByMobileNumber(
-                                loginId);
+        return userRepository.save(user);
     }
 
-    Map<String, Object> response =
-            new HashMap<>();
+    @PostMapping("/login")
+    public Map<String, Object> login(
+            @RequestBody Map<String, String> request) {
 
-    if (user.isPresent()
-            && user.get()
-            .getPassword()
-            .equals(password)) {
+        String loginId =
+                request.get("loginId");
 
-        response.put(
-                "success",
-                true);
+        String password =
+                request.get("password");
 
-        response.put(
-                "user",
-                user.get());
+        Optional<User> user =
+                userRepository.findByEmail(loginId);
 
-    } else {
+        if (user.isEmpty()) {
 
-        response.put(
-                "success",
-                false);
+            user =
+                    userRepository.findByMobileNumber(
+                            loginId);
+        }
 
-        response.put(
-                "message",
-                "Invalid Credentials");
+        Map<String, Object> response =
+                new HashMap<>();
+
+        if (user.isPresent()
+                && user.get()
+                .getPassword()
+                .equals(password)) {
+
+            response.put(
+                    "success",
+                    true);
+
+            response.put(
+                    "user",
+                    user.get());
+
+        } else {
+
+            response.put(
+                    "success",
+                    false);
+
+            response.put(
+                    "message",
+                    "Invalid Credentials");
+        }
+
+        return response;
     }
 
-    return response;
-}
+    @PostMapping("/change-password")
+    public Map<String, String> changePassword(
+            @RequestBody Map<String, String> request) {
 
+        String email =
+                request.get("email");
 
+        String newPassword =
+                request.get("newPassword");
+
+        Map<String, String> response =
+                new HashMap<>();
+
+        Optional<User> user =
+                userRepository.findByEmail(email);
+
+        if (user.isPresent()) {
+
+            User existingUser =
+                    user.get();
+
+            existingUser.setPassword(
+                    newPassword);
+
+            userRepository.save(
+                    existingUser);
+
+            response.put(
+                    "message",
+                    "Password Updated Successfully");
+
+        } else {
+
+            response.put(
+                    "message",
+                    "Email Not Found");
+        }
+
+        return response;
+    }
 }
