@@ -1,22 +1,56 @@
 <div class="auth-wrapper">
+
   <div class="auth-card">
-    <h1 class="brand">🌱 EcoTrackAI</h1>
-    <p class="subtitle">Login to continue</p>
 
-    <div class="form-group">
-      <input [(ngModel)]="loginId" placeholder="Email or Mobile Number" class="auth-input">
-      <input [(ngModel)]="password" type="password" placeholder="Password" class="auth-input">
-    </div>
+    <h1 class="brand">
+      🌱 EcoTrackAI
+    </h1>
 
-    <button (click)="login()" class="btn-primary">Login</button>
+    <p class="subtitle">
+      Login to continue
+    </p>
+
+    <input
+      [(ngModel)]="loginId"
+      placeholder="Email or Mobile Number"
+      class="auth-input">
+
+    <input
+      [(ngModel)]="password"
+      type="password"
+      placeholder="Password"
+      class="auth-input">
+
+    <button
+      (click)="login()"
+      class="btn-primary">
+
+      Login
+
+    </button>
 
     <div class="auth-footer">
+
       <div class="forgot-link">
-        <a href="/forgot-password">Forgot Password?</a>
+
+        <a routerLink="/forgot-password">
+          Forgot Password?
+        </a>
+
       </div>
-      <div class="register-link">
-        Don't have an account? <a href="/register">Register Here</a>
+
+      <div>
+
+        Don't have an account?
+
+        <a routerLink="/register">
+          Register Here
+        </a>
+
       </div>
+
     </div>
+
   </div>
+
 </div>

@@ -2,66 +2,64 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router'; // Added Router for better navigation
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './login.html'
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink
+  ],
+  templateUrl: './login.html',
+  styleUrl: './login.css'
 })
 export class LoginComponent {
-  // Initializing with empty strings
+
   loginId = '';
   password = '';
-  isLoading = false; // Added loading state for better UX
 
   constructor(
     private http: HttpClient,
-    private router: Router // Injected Router
+    private router: Router
   ) {}
 
   login(): void {
-    // Basic validation to prevent unnecessary API calls
-    if (!this.loginId || !this.password) {
-      alert('Please enter both Login ID and Password');
-      return;
-    }
 
-    this.isLoading = true;
+    this.http.post(
+      'https://ecotrackai-j8be.onrender.com/api/auth/login',
+      {
+        loginId: this.loginId,
+        password: this.password
+      }
+    )
+    .subscribe({
 
-    const loginData = {
-      loginId: this.loginId,
-      password: this.password
-    };
+      next: (res: any) => {
 
-    this.http.post('https://ecotrackai-j8be.onrender.com/api/auth/login', loginData)
-      .subscribe({
-        next: (res: any) => {
-          this.isLoading = false;
+        localStorage.setItem(
+          'userName',
+          res.user.name
+        );
 
-          if (res.success && res.user) {
-            // Store user info in localStorage
-            localStorage.setItem('userName', res.user.name);
-            localStorage.setItem('user', JSON.stringify(res.user));
-            
-            // Redirect using Angular Router (much faster than window.location)
-            this.router.navigate(['/dashboard']);
-          } else {
-            alert(res.message || 'Invalid Email, Mobile Number or Password');
-          }
-        },
-        error: (err) => {
-          this.isLoading = false;
-          console.error('Login Error:', err);
-          
-          // Handle specific HTTP errors (like 401 Unauthorized)
-          if (err.status === 401) {
-            alert('Unauthorized: Please check your credentials.');
-          } else {
-            alert('Server is currently unreachable. Please try again later.');
-          }
-        }
-      });
+        localStorage.setItem(
+          'user',
+          JSON.stringify(res.user)
+        );
+
+        this.router.navigate(
+          ['/dashboard']
+        );
+      },
+
+      error: (err) => {
+
+        alert(
+          err.error?.message ||
+          'Invalid Credentials'
+        );
+      }
+    });
   }
 }
