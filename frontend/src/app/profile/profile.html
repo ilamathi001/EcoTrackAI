@@ -1,46 +1,79 @@
-<div
-  style="
-  max-width:700px;
-  margin:40px auto;
-  background:white;
-  padding:30px;
-  border-radius:12px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+<div class="profile-container">
 
-  <h1
-    style="
-    text-align:center;
-    color:#2e7d32;">
+  <div class="profile-card">
 
-    👤 My Profile
+    <div class="avatar">
+      {{ user.name.charAt(0).toUpperCase() }}
+    </div>
 
-  </h1>
+    <h1>
+      {{ user.name }}
+    </h1>
 
-  <hr>
+    <p class="subtitle">
+      EcoTrackAI Member 🌱
+    </p>
 
-  <h3>Name</h3>
-  <p>{{ user.name }}</p>
+    <div class="info-card">
 
-  <h3>Email</h3>
-  <p>{{ user.email }}</p>
+      <h3>📧 Email</h3>
 
-  <h3>Mobile Number</h3>
-  <p>{{ user.mobileNumber }}</p>
+      <p>
+        {{ user.email }}
+      </p>
 
-  <br>
+    </div>
 
-  <button
-    (click)="goToDashboard()">
+    <div class="info-card">
 
-    Dashboard
+      <h3>📱 Mobile Number</h3>
 
-  </button>
+      <p>
+        {{ user.mobileNumber }}
+      </p>
 
-  <button
-    (click)="logout()">
+    </div>
 
-    Logout
+    <div class="stats-section">
 
-  </button>
+      <div class="stat-box">
+
+        <h4>🌱 Status</h4>
+
+        <p>Active User</p>
+
+      </div>
+
+      <div class="stat-box">
+
+        <h4>🏆 Level</h4>
+
+        <p>Green Member</p>
+
+      </div>
+
+    </div>
+
+    <div class="button-group">
+
+      <button
+        class="dashboard-btn"
+        (click)="goToDashboard()">
+
+        Dashboard
+
+      </button>
+
+      <button
+        class="logout-btn"
+        (click)="logout()">
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
