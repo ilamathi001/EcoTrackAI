@@ -13,12 +13,19 @@ import { Router, RouterLink } from '@angular/router';
     RouterLink
   ],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrls: ['./login.css']
 })
 export class LoginComponent {
 
   loginId = '';
   password = '';
+
+  errorMessage = '';
+
+  emailError = '';
+  passwordError = '';
+
+  isLoading = false;
 
   constructor(
     private http: HttpClient,
@@ -26,6 +33,34 @@ export class LoginComponent {
   ) {}
 
   login(): void {
+
+    this.errorMessage = '';
+    this.emailError = '';
+    this.passwordError = '';
+
+    let isValid = true;
+
+    if (!this.loginId.trim()) {
+
+      this.emailError =
+        'Please enter Email or Mobile Number';
+
+      isValid = false;
+    }
+
+    if (!this.password.trim()) {
+
+      this.passwordError =
+        'Please enter Password';
+
+      isValid = false;
+    }
+
+    if (!isValid) {
+      return;
+    }
+
+    this.isLoading = true;
 
     this.http.post(
       'https://ecotrackai-j8be.onrender.com/api/auth/login',
@@ -38,27 +73,38 @@ export class LoginComponent {
 
       next: (res: any) => {
 
-        localStorage.setItem(
-          'userName',
-          res.user.name
-        );
+        this.isLoading = false;
 
-        localStorage.setItem(
-          'user',
-          JSON.stringify(res.user)
-        );
+        if (res?.user) {
 
-        this.router.navigate(
-          ['/dashboard']
-        );
+          localStorage.setItem(
+            'userName',
+            res.user.name
+          );
+
+          localStorage.setItem(
+            'user',
+            JSON.stringify(res.user)
+          );
+
+          this.router.navigate(
+            ['/dashboard']
+          );
+
+        } else {
+
+          this.errorMessage =
+            'Login failed. Please try again.';
+        }
       },
 
       error: (err) => {
 
-        alert(
-          err.error?.message ||
-          'Invalid Credentials'
-        );
+        this.isLoading = false;
+
+        this.errorMessage =
+          err?.error?.message ||
+          'Wrong Email/Mobile Number or Password';
       }
     });
   }

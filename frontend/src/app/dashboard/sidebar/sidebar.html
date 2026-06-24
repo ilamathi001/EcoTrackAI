@@ -1,0 +1,45 @@
+<div class="menu-btn"
+     (click)="toggleSidebar()">
+
+  ☰
+
+</div>
+
+<div
+  class="overlay"
+  *ngIf="isOpen"
+  (click)="toggleSidebar()">
+
+</div>
+
+<div
+  class="sidebar"
+  [class.open]="isOpen">
+
+  <h2>🌱 EcoTrackAI</h2>
+
+  <ul>
+
+    <li (click)="goToDashboard()">
+      📊 Dashboard
+    </li>
+
+    <li (click)="goToProfile()">
+      👤 Profile
+    </li>
+
+    <li (click)="goToHistory()">
+      📈 History
+    </li>
+
+    <li (click)="goToRecommendations()">
+      🤖 Recommendations
+    </li>
+
+    <li (click)="logout()">
+      🚪 Logout
+    </li>
+
+  </ul>
+
+</div>

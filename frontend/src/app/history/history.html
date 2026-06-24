@@ -1,0 +1,110 @@
+<app-sidebar></app-sidebar>
+
+<div class="history-container">
+
+  <div class="history-header">
+
+    <h1>
+      📈 Activity History
+    </h1>
+
+    <p>
+      View your previous carbon footprint records
+    </p>
+
+  </div>
+
+  <div
+    class="table-wrapper"
+    *ngIf="history.length > 0">
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>#</th>
+          <th>Carbon Score</th>
+          <th>Emission (kg CO₂)</th>
+          <th>Eco Level</th>
+          <th>Date & Time</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr
+          *ngFor="
+            let item of history;
+            let i = index
+          ">
+
+          <td>{{ i + 1 }}</td>
+
+          <td>
+
+            <span class="score-badge">
+
+              {{ item.carbonScore }}
+
+            </span>
+
+          </td>
+
+          <td>
+
+            {{ item.carbonEmission }}
+
+          </td>
+
+          <td>
+
+            {{
+              item.carbonScore >= 90
+              ? '🏆 Eco Champion'
+              : item.carbonScore >= 75
+              ? '🌿 Green User'
+              : item.carbonScore >= 50
+              ? '📘 Eco Learner'
+              : '⚠ Beginner'
+            }}
+
+          </td>
+
+          <td>
+
+            {{
+              item.createdAt
+              ? (item.createdAt | date:'dd/MM/yyyy hh:mm a')
+              : 'N/A'
+            }}
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <div
+    class="empty-state"
+    *ngIf="history.length === 0">
+
+    <h2>
+      🌱 No Activity Yet
+    </h2>
+
+    <p>
+      Start calculating your carbon footprint
+      to see your history here.
+    </p>
+
+  </div>
+
+</div>

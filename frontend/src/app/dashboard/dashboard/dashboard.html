@@ -1,0 +1,379 @@
+<app-sidebar></app-sidebar>
+
+<div class="container">
+
+  <!-- TOP NAVBAR -->
+
+  <div class="top-navbar">
+
+    <div class="nav-left">
+      <h2>🌱 EcoTrackAI Dashboard</h2>
+    </div>
+
+    <div class="nav-right">
+      <span class="timezone">
+        🌍 {{ currentTimeZone }}
+      </span>
+    </div>
+
+  </div>
+
+  <!-- HERO SECTION -->
+
+  <div class="hero-section">
+
+    <div class="brand-section">
+
+      <h1>🌱 EcoTrackAI</h1>
+
+      <p>
+        Smart AI-Powered Sustainability Tracking Platform
+      </p>
+
+    </div>
+
+    <div class="welcome-card">
+
+      <h3>{{ greeting }},</h3>
+
+      <h2>{{ formData.userName }} 👋</h2>
+
+      <p>
+        Let's make today greener than yesterday!
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- STATISTICS -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon">🌱</div>
+
+      <div>
+
+        <h4>Carbon Score</h4>
+
+        <h2>{{ carbonScore }}</h2>
+
+      </div>
+
+    </div>
+
+    <div class="stat-card">
+
+      <div class="stat-icon">☁️</div>
+
+      <div>
+
+        <h4>CO₂ Emission</h4>
+
+        <h2>{{ carbonEmission }} kg</h2>
+
+      </div>
+
+    </div>
+
+    <div class="stat-card">
+
+      <div class="stat-icon">🌳</div>
+
+      <div>
+
+        <h4>Trees Saved</h4>
+
+        <h2>{{ treesSaved }}</h2>
+
+      </div>
+
+    </div>
+
+    <div class="stat-card">
+
+      <div class="stat-icon">📊</div>
+
+      <div>
+
+        <h4>Activities</h4>
+
+        <h2>{{ history.length }}</h2>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CHART -->
+
+  <div
+    class="chart-section"
+    *ngIf="history.length > 0">
+
+    <h3>📈 Carbon Footprint Trend</h3>
+
+    <app-carbon-chart
+      [history]="history">
+    </app-carbon-chart>
+
+  </div>
+
+  <!-- MAIN DASHBOARD -->
+
+  <div class="dashboard-content">
+
+    <!-- LEFT PANEL -->
+
+    <div class="left-panel">
+
+      <!-- ACTIVITY FORM -->
+
+      <div class="form-card">
+
+        <h3>📝 Log Your Activity</h3>
+
+        <label>
+          ⚡ Electricity Units (kWh)
+        </label>
+
+        <input
+          type="number"
+          [(ngModel)]="formData.electricityUnits"
+          placeholder="Enter units">
+
+        <label>
+          🚗 Distance Travelled (km)
+        </label>
+
+        <input
+          type="number"
+          [(ngModel)]="formData.distanceTravelled"
+          placeholder="Enter distance">
+
+        <label>
+          🚘 Vehicle Type
+        </label>
+
+        <select
+          [(ngModel)]="formData.vehicleType">
+
+          <option value="CAR">Car</option>
+          <option value="BUS">Bus</option>
+          <option value="BIKE">Bike</option>
+          <option value="TRAIN">Train</option>
+
+        </select>
+
+        <label>
+          🍽 Food Preference
+        </label>
+
+        <select
+          [(ngModel)]="formData.foodType">
+
+          <option value="NONVEG">Non Veg</option>
+          <option value="VEG">Veg</option>
+
+        </select>
+
+        <div
+          *ngIf="errorMessage"
+          class="error-message">
+
+          {{ errorMessage }}
+
+        </div>
+
+        <button
+          [disabled]="isLoading"
+          (click)="calculate()">
+
+          {{
+            isLoading
+            ? 'Processing...'
+            : '🌱 Calculate Footprint'
+          }}
+
+        </button>
+
+      </div>
+
+      <!-- AI RECOMMENDATION -->
+
+      <div
+        class="recommendation-card"
+        *ngIf="recommendation">
+
+        <h3>
+          🤖 AI Recommendations
+        </h3>
+
+        <pre>{{ recommendation }}</pre>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+
+    <div class="right-panel">
+
+      <!-- SCORE CARD -->
+
+      <div class="score-card">
+
+        <h3>
+          🌱 Your Carbon Score
+        </h3>
+
+        <div class="score-circle">
+
+          {{ carbonScore }}
+
+        </div>
+
+        <p>
+
+          Carbon Emission:
+          {{ carbonEmission }} kg CO₂
+
+        </p>
+
+      </div>
+
+      <!-- ECO LEVEL -->
+
+      <div
+        class="badge-card"
+        *ngIf="carbonScore > 0">
+
+        <h3>
+          🏆 Eco Level
+        </h3>
+
+        <h2>
+
+          {{ ecoLevel }}
+
+        </h2>
+
+      </div>
+
+      <!-- GOAL PROGRESS -->
+
+      <div
+        class="goal-card"
+        *ngIf="carbonScore > 0">
+
+        <h3>
+          🎯 Sustainability Goal
+        </h3>
+
+        <div class="progress-bar">
+
+          <div
+            class="progress-fill"
+            [style.width.%]="goalPercentage">
+          </div>
+
+        </div>
+
+        <p>
+
+          {{ goalPercentage }}%
+          Goal Completed
+
+        </p>
+
+      </div>
+
+      <!-- TREES SAVED -->
+
+      <div
+        class="badge-card"
+        *ngIf="treesSaved > 0">
+
+        <h3>
+          🌳 Environmental Impact
+        </h3>
+
+        <h2>
+
+          {{ treesSaved }}
+          Trees Saved
+
+        </h2>
+
+      </div>
+
+      <!-- RECENT ACTIVITIES -->
+
+      <div
+        class="recent-card"
+        *ngIf="history.length > 0">
+
+        <h3>
+          📈 Recent Activities
+        </h3>
+
+        <div
+          *ngFor="
+            let item of history
+            | slice:0:5
+          "
+          class="activity-item">
+
+          <span
+            class="activity-badge">
+
+            🌱 Score
+            {{ item.carbonScore }}
+
+          </span>
+
+          <span>
+
+            {{ item.carbonEmission }}
+            kg CO₂
+
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- DOWNLOAD REPORT -->
+
+  <div
+    *ngIf="carbonScore > 0"
+    class="download-section">
+
+    <button
+      class="download-btn"
+      (click)="downloadReport()">
+
+      📥 Download Sustainability Report
+
+    </button>
+
+  </div>
+
+  <!-- LOADING -->
+
+  <div
+    *ngIf="isLoading"
+    class="loading-message">
+
+    🤖 Generating AI Sustainability Insights...
+
+  </div>
+
+</div>

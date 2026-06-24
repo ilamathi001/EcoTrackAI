@@ -2,9 +2,14 @@ import { Routes } from '@angular/router';
 
 import { LoginComponent } from './login/login';
 import { RegisterComponent } from './register/register';
-import { CarbonForm } from './components/carbon-form/carbon-form';
+import { DashboardComponent } from './dashboard/dashboard/dashboard';
 import { ProfileComponent } from './profile/profile';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password';
+
+import { HistoryComponent } from './history/history';
+import { RecommendationsComponent } from './recommendations/recommendations';
+
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
 
@@ -31,12 +36,31 @@ export const routes: Routes = [
 
   {
     path: 'dashboard',
-    component: CarbonForm
+    component: DashboardComponent,
+    canActivate: [authGuard]
   },
 
   {
     path: 'profile',
-    component: ProfileComponent
+    component: ProfileComponent,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'history',
+    component: HistoryComponent,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'recommendations',
+    component: RecommendationsComponent,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: '**',
+    redirectTo: 'login'
   }
 
 ];

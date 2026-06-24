@@ -10,24 +10,65 @@
       Login to continue
     </p>
 
+    <!-- Email / Mobile -->
+
     <input
       [(ngModel)]="loginId"
+      (keyup.enter)="login()"
       placeholder="Email or Mobile Number"
       class="auth-input">
 
+    <div
+      *ngIf="emailError"
+      class="field-error">
+
+      {{ emailError }}
+
+    </div>
+
+    <!-- Password -->
+
     <input
       [(ngModel)]="password"
+      (keyup.enter)="login()"
       type="password"
       placeholder="Password"
       class="auth-input">
 
+    <div
+      *ngIf="passwordError"
+      class="field-error">
+
+      {{ passwordError }}
+
+    </div>
+
+    <!-- Login Button -->
+
     <button
       (click)="login()"
-      class="btn-primary">
+      class="btn-primary"
+      [disabled]="isLoading">
 
-      Login
+      {{
+        isLoading
+          ? 'Signing In...'
+          : 'Login'
+      }}
 
     </button>
+
+    <!-- API Error -->
+
+    <div
+      *ngIf="errorMessage"
+      class="error-message">
+
+      {{ errorMessage }}
+
+    </div>
+
+    <!-- Footer -->
 
     <div class="auth-footer">
 
@@ -39,7 +80,7 @@
 
       </div>
 
-      <div>
+      <div class="register-link">
 
         Don't have an account?
 

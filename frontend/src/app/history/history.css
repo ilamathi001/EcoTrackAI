@@ -1,0 +1,155 @@
+.history-container{
+  max-width:1200px;
+  margin:30px auto;
+  padding:30px;
+}
+
+.history-header{
+  margin-bottom:25px;
+  text-align:center;
+}
+
+.history-header h1{
+  color:#2e7d32;
+  margin-bottom:8px;
+  font-size:32px;
+}
+
+.history-header p{
+  color:#666;
+  font-size:16px;
+}
+
+/* Debug Section */
+
+.debug-section{
+  background:#fff8e1;
+  border-left:5px solid #ff9800;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:20px;
+}
+
+.debug-section p{
+  margin:0 0 10px;
+  font-weight:bold;
+}
+
+.debug-section pre{
+  margin:0;
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-size:12px;
+}
+
+/* Table */
+
+.table-wrapper{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+thead{
+  background:#2e7d32;
+  color:white;
+}
+
+th{
+  padding:18px;
+  text-align:left;
+  font-size:15px;
+}
+
+td{
+  padding:16px;
+  border-bottom:1px solid #eee;
+}
+
+tbody tr{
+  transition:.3s;
+}
+
+tbody tr:hover{
+  background:#f4fff5;
+}
+
+/* Score Badge */
+
+.score-badge{
+  background:#e8f5e9;
+  color:#2e7d32;
+  padding:8px 14px;
+  border-radius:20px;
+  font-weight:700;
+}
+
+/* Eco Levels */
+
+.champion{
+  color:#2e7d32;
+  font-weight:700;
+}
+
+.green{
+  color:#43a047;
+  font-weight:700;
+}
+
+.learner{
+  color:#fb8c00;
+  font-weight:700;
+}
+
+.beginner{
+  color:#e53935;
+  font-weight:700;
+}
+
+/* Empty State */
+
+.empty-state{
+  text-align:center;
+  padding:60px;
+  background:white;
+  border-radius:18px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+.empty-state h2{
+  color:#2e7d32;
+  margin-bottom:10px;
+}
+
+.empty-state p{
+  color:#666;
+  font-size:15px;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+  .history-container{
+    padding:15px;
+  }
+
+  .table-wrapper{
+    overflow-x:auto;
+  }
+
+  table{
+    min-width:700px;
+  }
+
+  .history-header h1{
+    font-size:24px;
+  }
+
+}

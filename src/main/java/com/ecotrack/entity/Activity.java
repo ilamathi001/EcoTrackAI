@@ -1,5 +1,7 @@
 package com.ecotrack.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "activity")
 public class Activity {
+
 
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +37,14 @@ private Double carbonEmission;
 
 private Integer carbonScore;
 
+private LocalDateTime createdAt;
+
 public Activity() {
+}
+
+@PrePersist
+public void prePersist() {
+    this.createdAt = LocalDateTime.now();
 }
 
 public Long getId() {
@@ -100,5 +110,14 @@ public Integer getCarbonScore() {
 public void setCarbonScore(Integer carbonScore) {
     this.carbonScore = carbonScore;
 }
+
+public LocalDateTime getCreatedAt() {
+    return createdAt;
+}
+
+public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+}
+
 
 }

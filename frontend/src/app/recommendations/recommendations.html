@@ -1,0 +1,51 @@
+<app-sidebar></app-sidebar>
+
+<div class="recommendation-container">
+
+  <div class="recommendation-header">
+
+    <h1>
+      🤖 AI Sustainability Recommendations
+    </h1>
+
+    <p>
+      Personalized suggestions to reduce your carbon footprint
+    </p>
+
+  </div>
+
+  <div
+    class="recommendation-grid"
+    *ngIf="recommendations.length > 0">
+
+    <div
+      class="recommendation-card"
+      *ngFor="let item of recommendations">
+
+      <h3>
+        🌱 Sustainability Tip
+      </h3>
+
+      <p>
+        {{ item.recommendation }}
+      </p>
+
+    </div>
+
+  </div>
+
+  <div
+    class="empty-state"
+    *ngIf="recommendations.length === 0">
+
+    <h2>
+      🤖 No Recommendations Available
+    </h2>
+
+    <p>
+      Calculate your carbon footprint first.
+    </p>
+
+  </div>
+
+</div>
