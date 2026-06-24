@@ -15,15 +15,39 @@
       placeholder="Full Name"
       class="auth-input">
 
+    <div
+      *ngIf="nameError"
+      class="field-error">
+
+      {{ nameError }}
+
+    </div>
+
     <input
       [(ngModel)]="email"
       placeholder="Email Address"
       class="auth-input">
 
+    <div
+      *ngIf="emailError"
+      class="field-error">
+
+      {{ emailError }}
+
+    </div>
+
     <input
       [(ngModel)]="mobileNumber"
       placeholder="Mobile Number"
       class="auth-input">
+
+    <div
+      *ngIf="mobileError"
+      class="field-error">
+
+      {{ mobileError }}
+
+    </div>
 
     <input
       [(ngModel)]="password"
@@ -31,18 +55,49 @@
       placeholder="Password"
       class="auth-input">
 
+    <div
+      *ngIf="passwordError"
+      class="field-error">
+
+      {{ passwordError }}
+
+    </div>
+
     <button
       (click)="register()"
-      class="btn-primary">
+      class="btn-primary"
+      [disabled]="isLoading">
 
-      Create Account
+      {{
+        isLoading
+          ? 'Creating Account...'
+          : 'Create Account'
+      }}
 
     </button>
 
+    <div
+      *ngIf="errorMessage"
+      class="error-message">
+
+      {{ errorMessage }}
+
+    </div>
+
+    <div
+      *ngIf="successMessage"
+      class="success-message">
+
+      {{ successMessage }}
+
+    </div>
+
     <div class="auth-footer">
 
+      Already Registered?
+
       <a routerLink="/login">
-        Already Registered? Login
+        Login
       </a>
 
     </div>

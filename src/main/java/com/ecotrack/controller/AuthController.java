@@ -19,110 +19,126 @@ import com.ecotrack.repository.UserRepository;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
+    @Autowired
+    private UserRepository userRepository;
 
-@Autowired
-private UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
-@Autowired
-private BCryptPasswordEncoder passwordEncoder;
+    @PostMapping("/register")
+    public User register(
+            @Valid @RequestBody User user) {
 
-@PostMapping("/register")
-public User register(
-        @Valid @RequestBody User user) {
+        if (userRepository
+                .findByEmail(user.getEmail())
+                .isPresent()) {
 
-    user.setPassword(
-            passwordEncoder.encode(
-                    user.getPassword()));
+            throw new RuntimeException(
+                    "Email Address already exists");
+        }
 
-    return userRepository.save(user);
-}
+        if (userRepository
+                .findByMobileNumber(
+                        user.getMobileNumber())
+                .isPresent()) {
 
-@PostMapping("/login")
-public Map<String, Object> login(
-        @RequestBody Map<String, String> request) {
+            throw new RuntimeException(
+                    "Mobile Number already exists");
+        }
 
-    String loginId =
-            request.get("loginId");
+        user.setPassword(
+                passwordEncoder.encode(
+                        user.getPassword()));
 
-    String password =
-            request.get("password");
+        return userRepository.save(user);
+    }
 
-    Optional<User> user =
-            userRepository.findByEmail(loginId);
+    @PostMapping("/login")
+    public Map<String, Object> login(
+            @RequestBody Map<String, String> request) {
 
-    if (user.isEmpty()) {
+        String loginId =
+                request.get("loginId");
 
-        user =
-                userRepository.findByMobileNumber(
+        String password =
+                request.get("password");
+
+        Optional<User> user =
+                userRepository.findByEmail(
                         loginId);
+
+        if (user.isEmpty()) {
+
+            user =
+                    userRepository.findByMobileNumber(
+                            loginId);
+        }
+
+        if (user.isEmpty()) {
+
+            throw new ResourceNotFoundException(
+                    "Invalid Credentials");
+        }
+
+        if (!passwordEncoder.matches(
+                password,
+                user.get().getPassword())) {
+
+            throw new ResourceNotFoundException(
+                    "Invalid Credentials");
+        }
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+        response.put(
+                "success",
+                true);
+
+        response.put(
+                "user",
+                user.get());
+
+        return response;
     }
 
-    if (user.isEmpty()) {
+    @PostMapping("/change-password")
+    public Map<String, String> changePassword(
+            @RequestBody Map<String, String> request) {
 
-        throw new ResourceNotFoundException(
-                "Invalid Credentials");
+        String email =
+                request.get("email");
+
+        String newPassword =
+                request.get("newPassword");
+
+        Optional<User> user =
+                userRepository.findByEmail(
+                        email);
+
+        if (user.isEmpty()) {
+
+            throw new ResourceNotFoundException(
+                    "Email Not Found");
+        }
+
+        User existingUser =
+                user.get();
+
+        existingUser.setPassword(
+                passwordEncoder.encode(
+                        newPassword));
+
+        userRepository.save(
+                existingUser);
+
+        Map<String, String> response =
+                new HashMap<>();
+
+        response.put(
+                "message",
+                "Password Updated Successfully");
+
+        return response;
     }
-
-    if (!passwordEncoder.matches(
-            password,
-            user.get().getPassword())) {
-
-        throw new ResourceNotFoundException(
-                "Invalid Credentials");
-    }
-
-    Map<String, Object> response =
-            new HashMap<>();
-
-    response.put(
-            "success",
-            true);
-
-    response.put(
-            "user",
-            user.get());
-
-    return response;
-}
-
-@PostMapping("/change-password")
-public Map<String, String> changePassword(
-        @RequestBody Map<String, String> request) {
-
-    String email =
-            request.get("email");
-
-    String newPassword =
-            request.get("newPassword");
-
-    Optional<User> user =
-            userRepository.findByEmail(email);
-
-    if (user.isEmpty()) {
-
-        throw new ResourceNotFoundException(
-                "Email Not Found");
-    }
-
-    User existingUser =
-            user.get();
-
-    existingUser.setPassword(
-            passwordEncoder.encode(
-                    newPassword));
-
-    userRepository.save(
-            existingUser);
-
-    Map<String, String> response =
-            new HashMap<>();
-
-    response.put(
-            "message",
-            "Password Updated Successfully");
-
-    return response;
-}
-
-
 }

@@ -3,6 +3,7 @@ package com.ecotrack.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -13,20 +14,32 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "Please enter your Full Name")
+    @Size(
+        min = 3,
+        max = 50,
+        message = "Full Name must contain 3 to 50 characters"
+    )
     private String name;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
+    @NotBlank(message = "Please enter your Email Address")
+    @Email(message = "Please enter a valid Email Address")
     @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "Mobile Number is required")
+    @NotBlank(message = "Please enter your Mobile Number")
+    @Pattern(
+        regexp = "^[0-9]{10}$",
+        message = "Mobile Number must be exactly 10 digits"
+    )
     @Column(unique = true)
     private String mobileNumber;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @NotBlank(message = "Please enter your Password")
+    @Size(
+        min = 8,
+        message = "Password must be at least 8 characters long"
+    )
     private String password;
 
     private String resetToken;
