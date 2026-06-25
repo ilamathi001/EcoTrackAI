@@ -10,74 +10,60 @@ import org.springframework.web.bind.annotation.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(
-            ResourceNotFoundException.class)
-    @ResponseStatus(
-            HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(
             ResourceNotFoundException ex) {
 
-        Map<String, String> response =
-                new HashMap<>();
+        Map<String, String> response = new HashMap<>();
 
-        response.put(
-                "message",
-                ex.getMessage());
+        response.put("message", ex.getMessage());
 
         return response;
     }
 
-    @ExceptionHandler(
-            MethodArgumentNotValidException.class)
-    @ResponseStatus(
-            HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(
             MethodArgumentNotValidException ex) {
 
-        Map<String, String> response =
-                new HashMap<>();
+        Map<String, String> response = new HashMap<>();
 
         String errorMessage =
                 ex.getBindingResult()
                         .getFieldError()
                         .getDefaultMessage();
 
-        response.put(
-                "message",
-                errorMessage);
+        response.put("message", errorMessage);
 
         return response;
     }
 
-    @ExceptionHandler(
-            RuntimeException.class)
-    @ResponseStatus(
-            HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleRuntimeException(
             RuntimeException ex) {
 
-        Map<String, String> response =
-                new HashMap<>();
+        ex.printStackTrace();
 
-        response.put(
-                "message",
-                ex.getMessage());
+        Map<String, String> response = new HashMap<>();
+
+        response.put("message", ex.getMessage());
 
         return response;
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(
-            HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleGeneralException(
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, Object> handleGeneralException(
             Exception ex) {
 
-        Map<String, String> response =
-                new HashMap<>();
+        ex.printStackTrace();
 
-        response.put(
-                "message",
-                "Something went wrong. Please try again later.");
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("exception", ex.getClass().getSimpleName());
+        response.put("message", ex.getMessage());
 
         return response;
     }
