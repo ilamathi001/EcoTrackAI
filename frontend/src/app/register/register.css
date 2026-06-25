@@ -177,3 +177,26 @@
 
   text-decoration:none;
 }
+.register-link{
+    margin-top:20px;
+    text-align:center;
+    font-size:15px;
+    color:#666;
+}
+
+.register-link span{
+    color:#555;
+}
+
+.register-link a{
+    margin-left:6px;
+    color:#2e7d32;
+    text-decoration:none;
+    font-weight:600;
+    transition:.3s;
+}
+
+.register-link a:hover{
+    color:#1b5e20;
+    text-decoration:underline;
+}
