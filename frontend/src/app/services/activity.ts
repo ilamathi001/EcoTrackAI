@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -21,7 +20,6 @@ export interface RecommendationResponse {
   recommendation: string;
 }
 
-// FIX: Added 'export' and matched the name used in Dashboard
 export interface ActivityHistory {
   userName?: string;
   carbonScore: number;
@@ -29,8 +27,11 @@ export interface ActivityHistory {
   createdAt?: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class ActivityService {
+
   private readonly BASE_URL = 'https://ecotrackai-j8be.onrender.com';
   private readonly ACTIVITY_URL = `${this.BASE_URL}/api/activity`;
   private readonly AI_URL = `${this.BASE_URL}/api/ai/recommend`;
@@ -48,13 +49,28 @@ export class ActivityService {
   }
 
   getHistory(userName: string): Observable<ActivityHistory[]> {
+
     const sanitizedName = encodeURIComponent(userName.trim());
-    return this.http.get<ActivityHistory[]>(`${this.ACTIVITY_URL}/history/${sanitizedName}`)
-      .pipe(catchError(this.handleError));
+
+    return this.http.get<ActivityHistory[]>(
+      `${this.ACTIVITY_URL}/history/${sanitizedName}`
+    ).pipe(
+      catchError(this.handleError)
+    );
   }
 
   private handleError(error: HttpErrorResponse) {
+
     console.error('Backend Error:', error);
-    return throwError(() => new Error(error.message || 'Server Error'));
+
+    let errorMessage = 'Something went wrong';
+
+    if (error.error?.message) {
+      errorMessage = error.error.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    return throwError(() => new Error(errorMessage));
   }
 }
