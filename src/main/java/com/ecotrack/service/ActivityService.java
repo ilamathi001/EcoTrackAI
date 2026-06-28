@@ -38,12 +38,12 @@ public class ActivityService {
             activity.setFoodType(activity.getFoodType().trim().toUpperCase());
         }
 
-        if (activity.getElectricityUnits() < 0) {
+        if (activity.getElectricityUnits() == null || activity.getElectricityUnits() < 0) {
             activity.setElectricityUnits(0);
         }
 
-        if (activity.getDistanceTravelled() < 0) {
-            activity.setDistanceTravelled(0);
+        if (activity.getDistanceTravelled() == null || activity.getDistanceTravelled() < 0) {
+            activity.setDistanceTravelled(0.0);
         }
 
         double electricityEmission = activity.getElectricityUnits() * 0.82;
@@ -51,7 +51,6 @@ public class ActivityService {
         double transportFactor;
 
         switch (activity.getVehicleType()) {
-
             case "BUS":
                 transportFactor = 0.04;
                 break;
@@ -66,7 +65,7 @@ public class ActivityService {
 
             case "BICYCLE":
             case "WALK":
-                transportFactor = 0.00;
+                transportFactor = 0.0;
                 break;
 
             case "CAR":
@@ -81,7 +80,6 @@ public class ActivityService {
         double foodEmission;
 
         switch (activity.getFoodType()) {
-
             case "NONVEG":
                 foodEmission = 50;
                 break;
