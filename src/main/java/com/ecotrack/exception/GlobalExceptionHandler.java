@@ -1,9 +1,11 @@
 package com.ecotrack.exception;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,18 +15,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger =
+            LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handleNotFound(ResourceNotFoundException ex) {
+    public Map<String, Object> handleResourceNotFound(
+            ResourceNotFoundException ex) {
 
-        Map<String, Object> response = new HashMap<>();
+        logger.warn("Resource Not Found : {}", ex.getMessage());
 
-        response.put("success", false);
-        response.put("status", HttpStatus.NOT_FOUND.value());
-        response.put("timestamp", LocalDateTime.now());
-        response.put("message", ex.getMessage());
-
-        return response;
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                "RESOURCE_NOT_FOUND",
+                ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -32,53 +36,60 @@ public class GlobalExceptionHandler {
     public Map<String, Object> handleValidationException(
             MethodArgumentNotValidException ex) {
 
-        Map<String, Object> response = new HashMap<>();
-
-        String errorMessage = "Validation Failed";
+        String message = "Validation Failed";
 
         if (ex.getBindingResult().getFieldError() != null) {
-            errorMessage = ex.getBindingResult()
+            message = ex.getBindingResult()
                     .getFieldError()
                     .getDefaultMessage();
         }
 
-        response.put("success", false);
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("timestamp", LocalDateTime.now());
-        response.put("message", errorMessage);
+        logger.warn("Validation Error : {}", message);
 
-        return response;
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "VALIDATION_ERROR",
+                message);
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handleRuntimeException(RuntimeException ex) {
+    public Map<String, Object> handleRuntimeException(
+            RuntimeException ex) {
 
-        ex.printStackTrace();
+        logger.error("Runtime Exception", ex);
 
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("success", false);
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("timestamp", LocalDateTime.now());
-        response.put("message", ex.getMessage());
-
-        return response;
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "RUNTIME_ERROR",
+                ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, Object> handleGeneralException(Exception ex) {
+    public Map<String, Object> handleException(
+            Exception ex) {
 
-        ex.printStackTrace();
+        logger.error("Unexpected Exception", ex);
 
-        Map<String, Object> response = new HashMap<>();
+        return buildResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "INTERNAL_SERVER_ERROR",
+                "Something went wrong. Please try again later.");
+    }
+
+    private Map<String, Object> buildResponse(
+            HttpStatus status,
+            String errorCode,
+            String message) {
+
+        Map<String, Object> response = new LinkedHashMap<>();
 
         response.put("success", false);
-        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.put("status", status.value());
+        response.put("error", errorCode);
+        response.put("message", message);
         response.put("timestamp", LocalDateTime.now());
-        response.put("exception", ex.getClass().getSimpleName());
-        response.put("message", ex.getMessage());
 
         return response;
     }
