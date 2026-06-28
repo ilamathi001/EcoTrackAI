@@ -1,9 +1,0 @@
-com\ecotrack\service\GeminiService.class
-com\ecotrack\config\RestTemplateConfig.class
-com\ecotrack\service\GeminiService$1.class
-com\ecotrack\EcoTrackAiApplication.class
-com\ecotrack\repository\ActivityRepository.class
-com\ecotrack\service\ActivityService.class
-com\ecotrack\controller\ActivityController.class
-com\ecotrack\entity\Activity.class
-com\ecotrack\controller\AiController.class
