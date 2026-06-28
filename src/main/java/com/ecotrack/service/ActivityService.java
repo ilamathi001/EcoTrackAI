@@ -24,12 +24,18 @@ public class ActivityService {
             throw new RuntimeException("User Name is required");
         }
 
+        activity.setUserName(activity.getUserName().trim());
+
         if (activity.getVehicleType() == null || activity.getVehicleType().trim().isEmpty()) {
             activity.setVehicleType("CAR");
+        } else {
+            activity.setVehicleType(activity.getVehicleType().trim().toUpperCase());
         }
 
         if (activity.getFoodType() == null || activity.getFoodType().trim().isEmpty()) {
             activity.setFoodType("VEG");
+        } else {
+            activity.setFoodType(activity.getFoodType().trim().toUpperCase());
         }
 
         if (activity.getElectricityUnits() < 0) {
@@ -44,7 +50,7 @@ public class ActivityService {
 
         double transportFactor;
 
-        switch (activity.getVehicleType().trim().toUpperCase()) {
+        switch (activity.getVehicleType()) {
 
             case "BUS":
                 transportFactor = 0.04;
@@ -58,6 +64,11 @@ public class ActivityService {
                 transportFactor = 0.03;
                 break;
 
+            case "BICYCLE":
+            case "WALK":
+                transportFactor = 0.00;
+                break;
+
             case "CAR":
             default:
                 transportFactor = 0.12;
@@ -67,21 +78,43 @@ public class ActivityService {
         double transportEmission =
                 activity.getDistanceTravelled() * transportFactor;
 
-        double foodEmission =
-                activity.getFoodType().equalsIgnoreCase("NONVEG") ? 50 : 20;
+        double foodEmission;
+
+        switch (activity.getFoodType()) {
+
+            case "NONVEG":
+                foodEmission = 50;
+                break;
+
+            case "VEGAN":
+                foodEmission = 10;
+                break;
+
+            case "VEG":
+            default:
+                foodEmission = 20;
+                break;
+        }
 
         double totalEmission =
                 electricityEmission + transportEmission + foodEmission;
 
+        totalEmission = Math.round(totalEmission * 100.0) / 100.0;
+
         int score = (int) Math.max(0, Math.min(100, 100 - (totalEmission / 10)));
 
-        activity.setCarbonEmission(Math.round(totalEmission * 100.0) / 100.0);
+        activity.setCarbonEmission(totalEmission);
         activity.setCarbonScore(score);
 
         return repository.save(activity);
     }
 
     public List<Activity> getHistory(String userName) {
-        return repository.findByUserName(userName);
+
+        if (userName == null || userName.trim().isEmpty()) {
+            throw new RuntimeException("User Name is required");
+        }
+
+        return repository.findByUserName(userName.trim());
     }
 }
